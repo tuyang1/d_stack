@@ -86,6 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 获取日志文件内容
 - (nullable NSArray<NSString *> *)logFiles;
 
+-(void)removeNodeName:(NSString *)nodeName;
+
 @end
 
 NS_ASSUME_NONNULL_END

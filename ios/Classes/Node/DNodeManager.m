@@ -148,7 +148,7 @@
         }
         case DNodeActionTypeGesture:
         {
-            if (!node.canRemoveNode) {
+            if (!node.canRemoveNode && node.pageType == DNodePageTypeNative) {
                 DNode *lastNode = self.nodeList.lastObject;
                 if (lastNode) {
                     subArray = [self checkRemovedNode:node needRemove:lastNode];
@@ -729,5 +729,16 @@
 {
     return [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/DStack"];
 }
+-(void)removeNodeName:(NSString *)nodeName{
+    NSMutableArray* reversedArray = [[[self.nodeList reverseObjectEnumerator] allObjects] mutableCopy];
 
+    for (DNode *node in reversedArray) {
+        if ([node.identifier containsString:nodeName]) {
+            [self.nodeList removeObject:node];
+        }else{
+            break;
+        }
+    }
+    self.pageCount = self.nodeList.count;
+}
 @end
