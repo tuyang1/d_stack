@@ -1,7 +1,7 @@
 //
 //  DNavigator.m
 //  d_stack
-//  
+//
 //  Created by TAL on 2020/2/3.
 //
 
@@ -465,7 +465,18 @@ UIViewController *_DStackCurrentController(UIViewController *controller)
     if ([self isCustomClass]) {
         if (![self.dStackFlutterNodeMessage boolValue]) {
             UIViewController *dismiss = _DStackCurrentController(self);
-            if (!dismiss.isGesturePoped && [dismiss isCustomClass] && dismiss.presentingViewController != nil) {
+            
+            // 需要判断是否可以出栈 代码逻辑跟入栈 canPushInStack 保持一致
+            BOOL canDismissInStack = YES;
+            UIPresentationController *presentationController = dismiss.presentationController;
+            if (presentationController) {
+                // 判断代理是否是系统代理
+                id <UIAdaptivePresentationControllerDelegate> delegate = presentationController.delegate;
+                // UIAlertController需要判断是否自定义 _UIAlertControllerAlertPresentationController
+                canDismissInStack = [(NSObject *)delegate isCustomClass];
+            }
+            
+            if (!dismiss.isGesturePoped && [dismiss isCustomClass] && canDismissInStack && dismiss.presentingViewController != nil) {
                 // 不是手势触发的dismiss
                 [[DStackNavigator instance] willAppearViewController:dismiss.presentingViewController];
                 checkNode(dismiss, DNodeActionTypeDismiss);
